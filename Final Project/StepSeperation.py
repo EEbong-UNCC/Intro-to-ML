@@ -36,4 +36,22 @@ In order to extract average force per step, stance duration, swing duration, tim
     - average unloading rate (peak force - final force/ time from peak force to toe-off) 
     - Double Support time (time between heel strike of one foot and toe off on the other (aka time from 0 -> + slope for one foot to other foot force just reaching 0) 
     
+put steps into array 
+put array in array 
+dataframe of arrays
 '''
+def gradient(instance): 
+    left = instance['FP!_z']
+    right = instance['FP2_z']
+    step_index = [[],[]]
+    row_num = np.linspace(0,len(left), len(left))
+    left_slope = np.gradient(left, row_num)
+    right_slope = np.gradient(right, row_num)
+    for x in range(len(left_slope)):
+        if left_slope[x] == 0:
+            if left_slope[x+1] != 0:
+                step_index[0].append(x)
+        if right_slope[x] == 0:
+            if right_slope[x+1] !=0:
+                step_index[1].append(x)
+    return step_index

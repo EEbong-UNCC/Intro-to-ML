@@ -18,8 +18,10 @@ Theta_initial = 0
 #Implement cost function
 def cost_function(theta, X, y):
     m = len(y)
-    predictions = X.dot(theta)
-    cost = (1/(2*m)) * np.sum(predictions-y)**2
+    prediction = X.dot(theta)
+    error = np.subtract(prediction,y)
+    sqrerror = np.square(error)
+    cost = 1/(2*m) * sqrerror
     return cost
 
 
