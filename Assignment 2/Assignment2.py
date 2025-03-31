@@ -36,6 +36,10 @@ Y = data.iloc[:, 0].values
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X,Y, test_size = 0.20, random_state=1)
 
+import seaborn as sns
+sns.kdeplot(y_train, label='Train')
+sns.kdeplot(y_test, label='Test')
+
 #Problem 1
 
 #Develop linear regression with gradient decent algorithm 
@@ -81,11 +85,13 @@ def gradient_descent(xtrain,xtest,ytrain,ytest, learning_rate, iterations, theta
     return theta, cost_history_train,cost_history_test
 
 # evaluate based on area, bedrooms, bathrooms, stories, parking 
+#iterations1 = 22 #to avoid integer overflow
 iterations1 = 50
 lr1 = 0.1
 #lr1 =0.01
 all_features = ['Area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'guestroom', 'basement', 'hotwaterheat', 'aircondition', 'parking', 'prefarea', 'furnishingstatus']
 oneafeatures = ['bedrooms', 'bathrooms', 'stories', 'parking']
+#oneafeatures = ['Area', 'bedrooms', 'bathrooms', 'stories', 'parking']
 def featurelist(currentfeatures):
     featureindex = []
     all_features = ['Area', 'bedrooms', 'bathrooms', 'stories', 'mainroad', 'guestroom', 'basement', 'hotwaterheat', 'aircondition', 'parking', 'prefarea', 'furnishingstatus']
@@ -96,6 +102,7 @@ X1a = X_train[:, featurelist(oneafeatures)].astype('float64')
 X1a_test = X_test[:, featurelist(oneafeatures)].astype('float64')
 theta_1a = np.zeros(len(oneafeatures) + 1)
 theta_1a, cost_history1a, cost_history1a_test = gradient_descent(X1a,X1a_test, y_train.astype('float64'), y_test.astype('float64'),lr1,iterations1,theta_1a,intercept=True)
+#print(cost_history1a)
 
 plt.figure()
 plt.plot(np.linspace(0,iterations1,iterations1), cost_history1a, label='Train')
@@ -112,6 +119,7 @@ plt.text(iterations1*1.05,test1a,
           color='orange', va='center')
 plt.xlabel('Iterations')
 plt.ylabel('Loss')
+#plt.title('Training and Validation Loss with Area (1a)')
 plt.title('Training and Validation Loss (1a)')
 plt.legend()
 plt.grid(True, alpha=0.3)
@@ -122,11 +130,12 @@ plt.show()
 #Explore values for learning rate
 #Evaluate based on Area, bedrooms, bathrooms, stories, main road, duestroom, basement, hot water heating, air conditioning, parking, prefarea?
 onebfeatures = ['bedrooms', 'bathrooms', 'stories', 'mainroad', 'guestroom', 'basement', 'hotwaterheat', 'aircondition', 'parking', 'prefarea']
-
+#onebfeatures = ['Area','bedrooms', 'bathrooms', 'stories', 'mainroad', 'guestroom', 'basement', 'hotwaterheat', 'aircondition', 'parking', 'prefarea']
 X1b = X_train[:, featurelist(onebfeatures)].astype('float64')
 X1b_test = X_test[:, featurelist(onebfeatures)].astype('float64')
 theta_1b = np.zeros(len(onebfeatures)+ 1)
 theta_1b, cost_history1b, cost_history1b_test = gradient_descent(X1b, X1b_test, y_train.astype('float64'), y_test.astype('float64'), lr1, iterations1, theta_1b, intercept=True)
+#print(cost_history1b)
 
 plt.figure()
 plt.plot(np.linspace(0,iterations1,iterations1), cost_history1b, label='Train')
@@ -143,6 +152,7 @@ plt.text(iterations1*1.05,test1b,
           color='orange', va='center')
 plt.xlabel('Iterations')
 plt.ylabel('Loss')
+#plt.title('Training and Validation Loss Area (1b)')
 plt.title('Training and Validation Loss (1b)')
 plt.legend()
 plt.grid(True, alpha=0.3)
@@ -170,7 +180,8 @@ y_test_stand = sc2.transform(y_test.reshape(-1, 1)).flatten()
 #Normalized: evaluate based on area, bedrooms, stories, parking
 #iterations2 = 50
 iterations2 = 100
-#lr2 = 0.01
+#lr2 = 0.01 test 1
+#lr2 = 0.05 Test 2
 lr2 = 0.03
 twoafeatures = ['Area','bedrooms', 'bathrooms', 'stories', 'parking']
 X2a_norm = X_train_norm[:, featurelist(twoafeatures)].astype('float64')
@@ -301,7 +312,6 @@ for val in lambdas:
     theta_3a = np.zeros(len(twoafeatures)+ 1)
     theta_3a, cost_history3a, cost_history3a_test = gradient_descent(X2a_norm, X2a_test_norm, y_train_norm.astype('float64'), y_test_norm.astype('float64'), lr2, iterations2, theta_3a, intercept=True, lasso=True, lambda_=val)
     final_cost.append(cost_history3a_test[-1])
-
 best_lambda = lambdas[4]
 
 plt.figure()
@@ -320,7 +330,8 @@ plt.show()
 #print(final_cost)
 
 theta_3a, cost_history3a, cost_history3a_test = gradient_descent(X2a_norm, X2a_test_norm, y_train_norm.astype('float64'), y_test_norm.astype('float64'), lr2, iterations2, theta_3a, intercept=True, lasso=True, lambda_=best_lambda)
-
+print(theta_3a)
+print(theta_2a_norm)
 #PLot results 
 plt.figure()
 plt.plot(np.linspace(0,iterations2,iterations2), cost_history3a, label='Train')
@@ -368,7 +379,8 @@ plt.show()
 #print(final_cost)
 
 theta_3b, cost_history3b, cost_history3b_test = gradient_descent(X2b_norm, X2b_test_norm, y_train_norm.astype('float64'), y_test_norm.astype('float64'), lr2, iterations2, theta_3b, intercept=True, lasso=True, lambda_=best_lambda)
-
+print(theta_3b)
+print(theta_2b_norm)
 #PLot results 
 plt.figure()
 plt.plot(np.linspace(0,iterations2,iterations2), cost_history3b, label='Train')
