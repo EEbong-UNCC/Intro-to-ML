@@ -41,17 +41,31 @@ put array in array
 dataframe of arrays
 '''
 def gradient(instance): 
-    left = instance['FP!_z']
+    left = instance['FP1_z']
     right = instance['FP2_z']
-    step_index = [[],[]]
+    heel_strike_index = [[],[]]
     row_num = np.linspace(0,len(left), len(left))
     left_slope = np.gradient(left, row_num)
     right_slope = np.gradient(right, row_num)
     for x in range(len(left_slope)):
         if left_slope[x] == 0:
             if left_slope[x+1] != 0:
-                step_index[0].append(x)
+                heel_strike_index[0].append(x)
         if right_slope[x] == 0:
             if right_slope[x+1] !=0:
-                step_index[1].append(x)
-    return step_index
+                heel_strike_index[1].append(x)
+    return heel_strike_index
+
+#have an array with indices that is a sliding window 
+def first_step(heel_strike_index): 
+    i = 0
+    steps = []
+    #if left foot strikes first
+    if heel_strike_index[0] < heel_strike_index[1]:
+        combined = zip(heel_strike_index[:,0], heel_strike_index[:,1])
+    if heel_strike_index[1] < heel_strike_index[0]:
+        combined = zip(heel_strike_index[:,0], heel_strike_index[:,1])
+    for x, y in combined:
+        steps.append(x)
+        steps.append(y)
+    return steps
