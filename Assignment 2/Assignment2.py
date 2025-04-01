@@ -330,8 +330,8 @@ plt.show()
 #print(final_cost)
 
 theta_3a, cost_history3a, cost_history3a_test = gradient_descent(X2a_norm, X2a_test_norm, y_train_norm.astype('float64'), y_test_norm.astype('float64'), lr2, iterations2, theta_3a, intercept=True, lasso=True, lambda_=best_lambda)
-print(theta_3a)
-print(theta_2a_norm)
+#print(theta_3a)
+#print(theta_2a_norm)
 #PLot results 
 plt.figure()
 plt.plot(np.linspace(0,iterations2,iterations2), cost_history3a, label='Train')
@@ -379,8 +379,8 @@ plt.show()
 #print(final_cost)
 
 theta_3b, cost_history3b, cost_history3b_test = gradient_descent(X2b_norm, X2b_test_norm, y_train_norm.astype('float64'), y_test_norm.astype('float64'), lr2, iterations2, theta_3b, intercept=True, lasso=True, lambda_=best_lambda)
-print(theta_3b)
-print(theta_2b_norm)
+#print(theta_3b)
+#print(theta_2b_norm)
 #PLot results 
 plt.figure()
 plt.plot(np.linspace(0,iterations2,iterations2), cost_history3b, label='Train')
