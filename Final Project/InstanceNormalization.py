@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
+#I should normalize data after i create the dataset not before dumb dumb dumb
 #TODO Import Data in such a way that the file name can be changed
 data = {} 
 instance_speeds = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
