@@ -39,4 +39,4 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-#TODO: Graph normalized data to see if there is a change in result
+#Graph normalized data to see if there is a change in result

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import csv
 
 #I should normalize data after i create the dataset not before dumb dumb dumb
-#TODO Import Data in such a way that the file name can be changed
+# Import Data in such a way that the file name can be changed
 data = {} 
 instance_speeds = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
 for sub in range(1, 23):
@@ -17,7 +17,7 @@ for sub in range(1, 23):
         df = pd.read_csv(path)
         data[name] = df
 
-#TODO for each data set, scan each value, find the max and the min value and save them 
+# for each data set, scan each value, find the max and the min value and save them 
 max_forces = [0, 0, 0, 0, 0, 0]
 min_forces = [0, 0, 0, 0, 0, 0]
 forces = ['FP1_x','FP2_x', 'FP1_y', 'FP2_y', 'FP1_z', 'FP2_z']
@@ -30,7 +30,7 @@ for key in data:
         if min(inst_force) < min_forces[x]: 
             min_forces[x] = min(inst_force)
 
-#TODO create a new csv for each instance, post normalization where each value is replaced by the value - min value/(max value - min value)
+#create a new csv for each instance, post normalization where each value is replaced by the value - min value/(max value - min value)
 
 for key in data: 
     instance = data[key]

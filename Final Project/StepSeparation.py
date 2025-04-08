@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-#TODO Separate out into steps
 
 '''
 Logic: A step is defined as the heel strike of one foot to the heel strike of the opposite foot. In our data set, we do not have a standardized starting foot. Therefore in order to count number of steps and seperate it out into those steps
@@ -41,8 +40,10 @@ put array in array
 dataframe of arrays
 '''
 
-#to account for noise create strike and toe off threshold and account for slope
-
+'''
+Input: Force Plate Z1,Z2 data and a given threshold value 
+Output: An array of each time the heel strikes for each plate
+'''
 def strike_gradient(instance, threshold): 
     left = instance['FP1_z']
     right = instance['FP2_z']
@@ -55,10 +56,14 @@ def strike_gradient(instance, threshold):
         #problem, it's going to take every time in the stance duration until the slope becomes negative
         if left_slope[x] > 0 and left[x] < threshold and left[x+1] >=threshold:
             heel_strike_index[0].append(x)
-        if right_slope[x] >0 and right[x]<threshold and right[x+1] >=threshold:
+        if right_slope[x] > 0 and right[x]<threshold and right[x+1] >=threshold:
             heel_strike_index[1].append(x)
     return heel_strike_index
 
+'''
+Input: Force Plate Z1,Z2 data and a given threshold value 
+Output: An array of each time the toe lifts for each plate
+'''
 def lift_gradient(instance, threshold): 
     left = instance['FP1_z']
     right = instance['FP2_z']
@@ -66,35 +71,54 @@ def lift_gradient(instance, threshold):
     row_num = np.linspace(0,len(left), len(left))
     left_slope = np.gradient(left, row_num)
     right_slope = np.gradient(right, row_num)
-    for x in range(len(left_slope)):
+    for x in range(len(left_slope)-1):
         if left_slope[x] < 0 and left[x] > threshold and left[x+1] <= threshold:
             toe_lift_index[0].append(x)
         if right_slope[x] < 0 and right[x]>threshold and right[x+1] <=threshold:
             toe_lift_index[1].append(x)
     return toe_lift_index
 
-#have an array with indices that is a sliding window 
+'''
+Input: An array of heel strikes for each plate
+Output: an array of steps where, if parsed using a sliding window of two, the first number is the beginning of the step and the second number is the end
+''' 
 def first_step(heel_strike_index): 
     i = 0
     steps = []
     #if left foot strikes first
     if heel_strike_index[0] < heel_strike_index[1]:
-        combined = zip(heel_strike_index[:,0], heel_strike_index[:,1])
+        combined = zip(heel_strike_index[0], heel_strike_index[0])
     if heel_strike_index[1] < heel_strike_index[0]:
-        combined = zip(heel_strike_index[:,0], heel_strike_index[:,1])
+        combined = zip(heel_strike_index[1], heel_strike_index[0])
     for x, y in combined:
         steps.append(x)
         steps.append(y)
     return steps
 
+'''
+Input: An array of heel strikes for each plate, and the step windows
+Output: Which foot the instance starts on 
+''' 
 def first_foot(heel_strike_index, steps):
     #if the first index in steps matches [0] return left else return right
-    if heel_strike_index[0] == steps[0][0]:
+    if heel_strike_index[0][0] == steps[0]:
         ans = 'left'
-    if heel_strike_index[0] == steps[1][0]:
+    if heel_strike_index[1][0] == steps[0]:
         ans ='right'
     return ans 
 
+'''
+Input: An array of heel strikes and an array of toe lifts for each plate 
+Output: stance stop and start points for each foot
+''' 
 def stance_extraction(heel_strike_index,toe_lift_index):
     #want an ouput array of 
-    return zip(heel_strike_index[0],toe_lift_index[0]), zip(heel_strike_index[1],toe_lift_index[1])
+    stances = [[], []]
+    for i in range(2):
+        if heel_strike_index[i] < toe_lift_index[i]:
+            combined = zip(heel_strike_index[i],toe_lift_index[i])
+        else:
+            combined = zip(heel_strike_index[i],toe_lift_index[i][1:])
+        for x,y in combined:
+            stances[i].append([x,y])
+    return stances
