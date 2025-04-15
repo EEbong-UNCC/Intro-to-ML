@@ -52,7 +52,7 @@ def strike_gradient(instance, threshold):
     left_slope = np.gradient(left, row_num)
     right_slope = np.gradient(right, row_num)
     #when slope is positive and force is less than threshold
-    for x in range(len(left_slope)):
+    for x in range(len(left_slope)-1):
         #problem, it's going to take every time in the stance duration until the slope becomes negative
         if left_slope[x] > 0 and left[x] < threshold and left[x+1] >=threshold:
             heel_strike_index[0].append(x)
@@ -86,9 +86,9 @@ def first_step(heel_strike_index):
     i = 0
     steps = []
     #if left foot strikes first
-    if heel_strike_index[0] < heel_strike_index[1]:
-        combined = zip(heel_strike_index[0], heel_strike_index[0])
-    if heel_strike_index[1] < heel_strike_index[0]:
+    if heel_strike_index[0][0] < heel_strike_index[1][0]:
+        combined = zip(heel_strike_index[0], heel_strike_index[1])
+    if heel_strike_index[1][0] < heel_strike_index[0][0]:
         combined = zip(heel_strike_index[1], heel_strike_index[0])
     for x, y in combined:
         steps.append(x)
@@ -115,7 +115,7 @@ def stance_extraction(heel_strike_index,toe_lift_index):
     #want an ouput array of 
     stances = [[], []]
     for i in range(2):
-        if heel_strike_index[i] < toe_lift_index[i]:
+        if heel_strike_index[i][0] < toe_lift_index[i][0]:
             combined = zip(heel_strike_index[i],toe_lift_index[i])
         else:
             combined = zip(heel_strike_index[i],toe_lift_index[i][1:])

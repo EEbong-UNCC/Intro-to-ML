@@ -2,22 +2,7 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 import csv
-data = {} 
-instance_speeds = [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7]
-for sub in range(1, 23):
-    if sub == 4: 
-        continue
-    path_base = 'C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/Normalized Data/'
-    for speed in instance_speeds:
-        name = 'GP' + str(sub) + '_'+ str(speed) + '_force'
-        path = path_base + name + 'norm.csv'
-        df = pd.read_csv(path)
-        data[name] = df
-
-
-#extract peak for for x, y , z for each plate (6 features)
-#index [1-6]
-forces = ['FP1_x','FP2_x', 'FP1_y', 'FP2_y', 'FP1_z', 'FP2_z']
+from stepseperation import *
 
 #input instance, output peak_force 6 features
 def peak_force(instance, forces):
@@ -25,7 +10,6 @@ def peak_force(instance, forces):
     for ind, ele in enumerate(forces): 
         inst_force = instance[ele]
         max_forces[ind] = max(inst_force)
-    peak_force.append(max_forces)
     return max_forces
 
 #mean force x, y, z (6 features)
@@ -49,11 +33,12 @@ Index 7-12
 def mean_force(instance, stances, forces):
     mean_force = [[],[],[],[],[],[]]
     for index,force in enumerate(forces):
-        stance = stances[index//2]
+        stance = stances[(index)%2]
         for x in stance:
-            step_data = instance[x[0]:x[1], force]
+            step_data = instance.iloc[x[0]:x[1], forces.index(force)]
             mean_force[index].append(np.mean(step_data))
-    return np.mean(mean_force, axis=1)
+        mean_force[index] = np.mean(np.array(mean_force[index]))
+    return mean_force
 
 #go through each data point 
 #find max of each feature and number of participant 
@@ -71,7 +56,7 @@ def mean_FTI(stance,FP1_z):
     answer = []
     for x in stance:
         time = np.arange(x[0], x[1] + 1)/1000
-        force = FP1_z[x[0], x[1] + 1]
+        force = FP1_z[x[0]:x[1] + 1]
         fti = simps(force, time)
         answer.append(fti)
     return np.mean(answer)
@@ -85,7 +70,7 @@ def step_duration(steps):
     for i in range(1,len(steps)): 
         length = steps[i] - steps[i-1]
         duration.append(length)
-    return np.mean(duration)
+    return np.mean(duration)/1000
  
 '''
 Input: instance, stances
@@ -101,26 +86,29 @@ def peakandloading(instance,stances):
     loading_rate = [[],[]]
     unloading_rate = [[],[]]
     time_to_peak = [[],[]]
-    for index, stance in stances:
+    for index, stance in enumerate(stances):
         for i in stance:
-           stance_start = stance[0]
-           stance_end = stance[1]
+           stance_start = i[0]
+           stance_end = i[1]
            peak_force = np.max(instance[column[index]][stance_start:stance_end])
-           peak_force_time = instance[column[index]].index(peak_force)
+           peak_force_time = instance.index[instance[column[index]]==peak_force][0]
            if stance_start > peak_force_time or stance_end < peak_force_time:
-               print('Uh OH')
+               peak_force_time = instance.index[instance[column[index]]==peak_force][1]
+               #TODO Figure out why this is triggering
            #ttpf: time to peak force
-           ttpf = peak_force_time - stance_start
+           ttpf = (peak_force_time - stance_start)/1000
            time_to_peak[index].append(ttpf)
            #lr: loading rate
            lr = (peak_force - instance[column[index]][stance_start])/ttpf
            loading_rate[index].append(lr)
            #tfpf: time from peak force
-           tfpf = stance_end - peak_force_time
+           tfpf = (stance_end - peak_force_time)/1000
            ulr = (peak_force - instance[column[index]][stance_end])/tfpf
            unloading_rate[index].append(ulr)
-    
-    return np.mean(loading_rate,axis=1), np.mean(unloading_rate,axis=1), np.mean(time_to_peak, axis=1)   
+        loading_rate[index] = np.mean(np.array(loading_rate[index]))
+        unloading_rate[index] = np.mean(np.array(unloading_rate[index]))
+        time_to_peak[index] = np.mean(np.array(time_to_peak[index]))
+    return loading_rate, unloading_rate, time_to_peak   
             
 #Double Support time (time between heel strike of one foot and toe off on the other)
 # index 22, 23
@@ -128,18 +116,22 @@ def double_support(heel_strike_index, toe_off_index, first_foot):
     double = [] 
     feet = ['left','right']
     firstind = feet.index(first_foot)
-    for x in range(len(heel_strike_index[firstind])):
+    #pick the shorter array as index
+    length = min( [ len(toe_off_index[firstind-1]),len(heel_strike_index[firstind]) ])
+    for x in range(length):
         time = toe_off_index[firstind-1][x] - heel_strike_index[firstind][x]
-        double.append(time)
-    arr = toe_off_index[firstind] < heel_strike_index[firstind-1][0]
-    startind = 0
-    for index, object in arr: 
+        double.append(time/1000)
+    arr = np.where(np.array(toe_off_index[firstind]) < heel_strike_index[firstind-1][0], True, False)
+    startind = arr
+    for index, object in enumerate(arr): 
         if object == False: 
             startind = index
             break
-    for x in range(len(toe_off_index[firstind])-startind):
+    #pick the shorter array as index
+    length = min([ len(toe_off_index[firstind])-startind,len(heel_strike_index[firstind-1]) ])
+    for x in range(length):
         time = toe_off_index[firstind][startind+x] - heel_strike_index[firstind-1][x]
-        double.append(time)
+        double.append(time/1000)
     return np.mean(double)
     
 #Swing Duration 
@@ -152,14 +144,59 @@ def ssduration(stances):
     for stance in stances:
         toe_off = 0
         for inst in stance: 
-            for x,y in inst:
-                swing_duration[i].append(np.abs(x-toe_off))
-                stance_duration[i].append(y-x)
-                toe_off = y    
+            x = inst[0]
+            y = inst[1]
+            swing_duration[i].append(np.abs(x-toe_off))
+            stance_duration[i].append(y-x)
+            toe_off = y
+        stance_duration[i] = np.mean(stance_duration[i])/1000
+        swing_duration[i] = np.mean(swing_duration[i])/1000    
         i += 1
-    return np.mean(stance_duration, axis=1), np.mean(swing_duration, axis=1)
+    return np.mean(stance_duration), np.mean(swing_duration)
     
+def process_instance(y, instance, threshold):
+    answer = []
+    answer.append(y)
+    forces = ['FP1_x','FP2_x', 'FP1_y', 'FP2_y', 'FP1_z', 'FP2_z']
+    #Pre-processing 
+    heels = strike_gradient(instance, threshold)
+    toes = lift_gradient(instance, threshold)
+    mysteps = first_step(heels)
+    stance = stance_extraction(heels, toes)
+    firstfoot = first_foot(heels, mysteps)
 
-#TODO find all instances of time and divide by 1000 to get the correct time
-#TODO full loop for extraction of all features of one instance in new file
+    #Peak Forces 6
+    pf = peak_force(instance, forces)
+    answer.extend(pf)
+
+    #Mean Forces 6
+    mf = mean_force(instance, stance, forces)
+    answer.extend(mf)
+
+    #Mean FTI
+    fti1 = mean_FTI(stance[0], instance[forces[4]])
+    fti2 = mean_FTI(stance[1], instance[forces[5]])
+    answer.append(fti1)
+    answer.append(fti2)
+
+    #Step Duration 
+    sd = step_duration(mysteps)
+    answer.append(sd)
+
+    #Average Loading Rate Left/Right, Average Unloading Rate Left/Right, Time to peak Left/Right
+    lr, ulr, tp = peakandloading(instance, stance)
+    answer.extend(lr)
+    answer.extend(ulr)
+    answer.extend(tp)
+
+    #Double Support Time
+    ds = double_support(heels, toes, firstfoot)
+    answer.append(ds)
+
+    #Swing and Stance Duration
+    std, swd = ssduration(stance)
+    answer.append(std)
+    answer.append(swd)
+    
+    return answer
 #TODO start writing code for the actual models 
