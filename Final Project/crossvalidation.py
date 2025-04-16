@@ -36,4 +36,8 @@ clf.score(X_test, y_test)
                                                        ,display_labels=[ 1,  2,  3,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
                                                        ,cmap="YlGnBu")
 #plt.show()
-
+#TODO Implement cross validation 
+#TODO implement PCA
+#TODO Implement feature selection 
+#TODO Implement K mean 
+#TODO Naive Bayes
