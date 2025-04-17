@@ -31,10 +31,11 @@ X_test = sc2.transform(X_test)
 from sklearn import svm
 clf = svm.SVC(kernel='linear', C=1).fit(X_train, y_train)
 clf.score(X_test, y_test)
-
-#metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred_3,labels=classes
+'''
+metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred_3,labels=classes
                                                        ,display_labels=[ 1,  2,  3,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
                                                        ,cmap="YlGnBu")
+'''
 #plt.show()
 #TODO Implement cross validation 
 #TODO implement PCA
