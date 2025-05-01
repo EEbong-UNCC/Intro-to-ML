@@ -88,10 +88,20 @@ print(acc_nb)
 
 #Build and SVM Classifier to classify the type of cancer 
 from sklearn import svm
+from sklearn.feature_selection import RFE
 svm_classifier = svm.SVC(kernel='linear')
-svm_classifier.fit(X_train_stand, y_train)
-svm_y_pred = svm_classifier.predict(X_test_stand)
+estimator = RFE(svm_classifier, n_features_to_select=10, step=1) 
+estimator.fit(X,Y)
+x_new = estimator.fit_transform(X, Y)
+X_train, X_test, y_train, y_test = train_test_split(x_new,Y, test_size = 0.20, random_state=2)
+sc2 = preprocessing.StandardScaler()
+X_train_stand = sc2.fit_transform(X_train)
+X_test_stand = sc2.transform(X_test)
+
+
+
+#svm_y_pred = svm_classifier.predict(X_test_stand)
 
 #Plot Classification accuracy, precision, recall and F1 score 
-svm_acc = metrics.accuracy_score(y_test,svm_y_pred)
-print("SVM Accuracy: ", svm_acc)
+#svm_acc = metrics.accuracy_score(y_test,svm_y_pred)
+#print("SVM Accuracy: ", svm_acc)
