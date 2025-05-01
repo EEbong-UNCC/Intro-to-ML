@@ -1,4 +1,5 @@
 #Assignment 3 
+#Eka Ebong
 
 #Import Breast Cancer Dataset 
 
@@ -46,8 +47,8 @@ print("Precision: ", precision)
 #Part 2
 
 #Add a weight penalty
-#weight_class = LogisticRegression(random_state=0, penalty='l1', solver='liblinear')
-weight_class = LogisticRegression(random_state=0, penalty='l2')
+weight_class = LogisticRegression(random_state=0, penalty='l1', solver='liblinear')
+#weight_class = LogisticRegression(random_state=0, penalty='l2')
 #With L2 penalty, the results are the same
 
 #Repeat training 
