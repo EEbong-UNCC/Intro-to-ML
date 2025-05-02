@@ -93,7 +93,7 @@ def kmeansGMM(parsedData, numclusters, covTYPE):
 if __name__ =='__main__':
     #run accurracy with GMM
     
-    gmmlist = kmmeanstrainGMM(X_train_stand,y_train,2)
+    gmmlist = trainGMM(X_train_stand,y_train,2)
     predictions = predict(gmmlist, X_test_stand)
     acc = accuracy(predictions, y_test)
     print(acc)

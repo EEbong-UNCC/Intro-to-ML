@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 import csv
+from scipy.fft import fft
+from scipy.signal import welch
 from stepseperation import *
 
 #input instance, output peak_force 6 features
@@ -94,7 +96,6 @@ def peakandloading(instance,stances):
            peak_force_time = instance.index[instance[column[index]]==peak_force][0]
            if stance_start > peak_force_time or stance_end < peak_force_time:
                peak_force_time = instance.index[instance[column[index]]==peak_force][1]
-               #TODO Figure out why this is triggering
            #ttpf: time to peak force
            ttpf = (peak_force_time - stance_start)/1000
            time_to_peak[index].append(ttpf)
@@ -153,7 +154,29 @@ def ssduration(stances):
         swing_duration[i] = np.mean(swing_duration[i])/1000    
         i += 1
     return np.mean(stance_duration), np.mean(swing_duration)
-    
+
+#Frequency Features 
+def fft_features(FP1_z):
+    n = len(FP1_z)
+    fft_vals = np.abs(np.fft.fft(FP1_z)[:n//2])
+    ans = [np.mean(fft_vals), np.std(fft_vals), np.max(fft_vals)]
+    return ans
+
+def psd_features(FP1_z):
+    freqs, psd = welch(FP1_z, fs=1000)
+    plt.plot(freqs, psd)
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Power')# Highlight your band
+    plt.show()
+    ans = [freqs[np.argmax(psd)], np.sum(psd), np.sum(psd[(freqs > 1) & (freqs < 3)]) / np.sum(psd)]
+    return ans
+
+def harmonic_ratio(FP1_z, fs=1000):
+    freqs = np.abs(np.fft.fft(FP1_z))
+    fundamental = freqs[1:len(freqs)//2].argmax() + 1
+    harmonics = freqs[2*fundamental::fundamental]
+    return np.mean(harmonics[:3]) / np.mean(freqs)
+
 def process_instance(y, instance, threshold):
     answer = []
     answer.append(y)
@@ -199,4 +222,67 @@ def process_instance(y, instance, threshold):
     answer.append(swd)
     
     return answer
-#TODO start writing code for the actual models 
+
+def freqprocess_instance(y, instance, threshold):
+    answer = []
+    answer.append(y)
+    forces = ['FP1_x','FP2_x', 'FP1_y', 'FP2_y', 'FP1_z', 'FP2_z']
+    #Pre-processing 
+    heels = strike_gradient(instance, threshold)
+    toes = lift_gradient(instance, threshold)
+    mysteps = first_step(heels)
+    stance = stance_extraction(heels, toes)
+    firstfoot = first_foot(heels, mysteps)
+
+    #Peak Forces 6
+    pf = peak_force(instance, forces)
+    answer.extend(pf)
+
+    #Mean Forces 6
+    mf = mean_force(instance, stance, forces)
+    answer.extend(mf)
+
+    #Mean FTI
+    fti1 = mean_FTI(stance[0], instance[forces[4]])
+    fti2 = mean_FTI(stance[1], instance[forces[5]])
+    answer.append(fti1)
+    answer.append(fti2)
+
+    #Step Duration 
+    sd = step_duration(mysteps)
+    answer.append(sd)
+
+    #Average Loading Rate Left/Right, Average Unloading Rate Left/Right, Time to peak Left/Right
+    lr, ulr, tp = peakandloading(instance, stance)
+    answer.extend(lr)
+    answer.extend(ulr)
+    answer.extend(tp)
+
+    #Double Support Time
+    ds = double_support(heels, toes, firstfoot)
+    answer.append(ds)
+
+    #Swing and Stance Duration
+    std, swd = ssduration(stance)
+    answer.append(std)
+    answer.append(swd)
+
+    #FFT Info 
+    FFTL = fft_features(instance[forces[4]])
+    FFTR = fft_features(instance[forces[5]])
+    answer.extend(FFTL)
+    answer.extend(FFTR)
+
+    #PSD Info
+    PSDL = psd_features(instance[forces[4]])
+    PSDR = psd_features(instance[forces[5]])
+    answer.extend(PSDL)
+    answer.extend(PSDR)
+
+    #Harmonis Info
+    HARML = harmonic_ratio(instance[forces[4]])
+    HARMR = harmonic_ratio(instance[forces[5]])
+    answer.append(HARML)
+    answer.append(HARMR)
+
+    return answer

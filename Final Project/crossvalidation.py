@@ -37,6 +37,4 @@ metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred_3,labels=classes
                                                        ,cmap="YlGnBu")
 '''
 #plt.show()
-#TODO implement PCA
-#TODO Implement feature selection 
-#TODO Implement K mean 
+

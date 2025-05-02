@@ -7,14 +7,15 @@ import csv
 import seaborn as sns
 from sklearn import preprocessing
 from sklearn import metrics
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LogisticRegression
 
-file_path = 'C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/GaitFeatures.csv'
+file_path = 'C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/FullGaitFeatures.csv'
 
 data = pd.read_csv(file_path)
 
 #sepeate data into features and Y
-X = data.iloc[:, 1:27].values
+X = data.iloc[:, 1:].values
 Y = data.iloc[:, 0].values
 
 #split data into train and test 
@@ -83,25 +84,52 @@ nb_classifier = GaussianNB()
 nb_classifier.fit(X_train_stand, y_train)
 nb_y_pred = nb_classifier.predict(X_test_stand)
 acc_nb = metrics.accuracy_score(y_test, nb_y_pred)
+nb_recall = metrics.recall_score(y_test,nb_y_pred, average=None)
+nb_acc = metrics.accuracy_score(y_test,nb_y_pred)
+nb_precision = metrics.precision_score(y_test,nb_y_pred)
+nb_f1 = metrics.f1_score(y_test,nb_y_pred)
+print("Naive Bayes Accuracy: ", nb_acc)
+print("Naive Bayes Recall: ", nb_recall)
+print("Naive Bayes Precision: ", nb_precision)
+print("Naive Bayes F1: ", nb_f1)
 print("Naive Bayes Accuracy")
 print(acc_nb)
 
 #Build and SVM Classifier to classify the type of cancer 
 from sklearn import svm
-from sklearn.feature_selection import RFE
 svm_classifier = svm.SVC(kernel='linear')
-estimator = RFE(svm_classifier, n_features_to_select=10, step=1) 
-estimator.fit(X,Y)
-x_new = estimator.fit_transform(X, Y)
-X_train, X_test, y_train, y_test = train_test_split(x_new,Y, test_size = 0.20, random_state=2)
-sc2 = preprocessing.StandardScaler()
-X_train_stand = sc2.fit_transform(X_train)
-X_test_stand = sc2.transform(X_test)
-
-
-
-#svm_y_pred = svm_classifier.predict(X_test_stand)
+svm_classifier.fit(X_train_stand, y_train)
+svm_y_pred = svm_classifier.predict(X_test_stand)
 
 #Plot Classification accuracy, precision, recall and F1 score 
-#svm_acc = metrics.accuracy_score(y_test,svm_y_pred)
-#print("SVM Accuracy: ", svm_acc)
+svm_acc = metrics.accuracy_score(y_test,svm_y_pred)
+print("SVM Accuracy: ", svm_acc)
+
+from sklearn.ensemble import StackingClassifier
+estimators = [('nb', GaussianNB()), ('svm', svm.SVC(probability=True))]
+stack = StackingClassifier(estimators, final_estimator=LogisticRegression())
+stack.fit(X_train_stand, y_train)
+pred = stack.predict(X_test_stand)
+acc2 = metrics.accuracy_score(y_test, pred)
+print("SVM+NB Accuracy: ", acc2)
+
+from sklearn.naive_bayes import CategoricalNB
+nb_classifier = CategoricalNB()
+nb_classifier.fit(X_train_stand, y_train)
+nb_y_pred = nb_classifier.predict(X_test_stand)
+acc_nb = metrics.accuracy_score(y_test, nb_y_pred)
+print("Multi Accuracy")
+print(acc_nb)
+
+
+'''
+#PCA
+pca = PCA(n_components=0.95)
+X_pca = pca.fit_transform(X_train_stand)
+X_pca_test = pca.transform(X_test_stand)
+svm_classifier2 = svm.SVC(kernel='rbf')
+svm_classifier2.fit(X_pca, y_train)
+svm_y_pred2 = svm_classifier2.predict(X_pca_test)
+svm_acc2 = metrics.accuracy_score(y_test,svm_y_pred2)
+print("SVM Accuracy: ", svm_acc2)
+'''

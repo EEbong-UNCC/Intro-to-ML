@@ -33,4 +33,7 @@ steptime = step_duration(mysteps)
 lr, ulr, ttp = peakandloading(force_data, stance)
 doubs = double_support(heels, toes, firsrfoot)
 std, swd = ssduration(stance)
+fft = fft_features(force_plate_1)
+psd = psd_features(force_plate_1)
+hr = harmonic_ratio(force_plate_1)
 
