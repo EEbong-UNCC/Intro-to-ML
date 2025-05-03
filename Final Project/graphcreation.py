@@ -84,13 +84,13 @@ def allfeatcorrelation():
     plt.savefig(picture_path+name, dpi=300)
     plt.show()
 
-def rfe():
-    rfe = RFE(estimator=SVC(kernel='linear'), n_features_to_select=10)
+def rfe(x):
+    rfe = RFE(estimator=SVC(kernel='linear'), n_features_to_select=x)
     rfe.fit(X_train, y_train)
     return rfe
 
 def featureimportance():
-    recFE = rfe()
+    recFE = rfe(10)
     importance_df = pd.DataFrame({
         'Feature': column,
         'Ranking': rfe.ranking_
@@ -102,7 +102,7 @@ def featureimportance():
     plt.show()
 
 def bestModelPred():
-    recfe = rfe()
+    recfe = rfe(10)
     X_train_rfe = recfe.transform(X_train)
     X_test_rfe = recfe.transform(X_test)
 
@@ -110,6 +110,7 @@ def bestModelPred():
     NB.fit(X_train_rfe, y_train)
     NB_pred = NB.predict(X_test_rfe)
     return NB_pred
+
 def confusionBest():
     nb = bestModelPred()
     ax = metrics.ConfusionMatrixDisplay.from_predictions(y_test,nb,labels=[ 1,  2,  3,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
@@ -124,4 +125,55 @@ def confusionBest():
     plt.savefig(picture_path+name, dpi=300)
     plt.show()
 
-confusionBest()
+def evaluatenumFeat(x):
+    acc = []
+    for num in range(1,x):
+        features = rfe(num)
+        xrf = features.transform(X_train)
+        xrft = features.transform(X_test)
+        nb = GaussianNB()
+        nb.fit(xrf, y_train)
+        pred = nb.predict(xrft)
+        accuracy = metrics.accuracy_score(y_test, pred)
+        acc.append(accuracy)
+    return acc
+
+def accuracyovertime(num):
+    accuracies = evaluatenumFeat(num)
+    plt.figure(figsize=(12, 8))
+    plt.plot(
+        range(1,num), 
+        accuracies, 
+        color='#FF6B6B',  # Coral color (replace with any hex/name)
+        marker='o', 
+        linestyle='-', 
+        linewidth=2,
+        markersize=8,
+        label='Model Accuracy'
+    )
+
+    # Highlight peak at 10 features
+    plt.axvline(x=10, color='#4ECDC4', linestyle='--', alpha=0.7, label='Optimal (10 Features)')
+    plt.annotate(
+        f'Peak Accuracy: {max(accuracies):.3f}', 
+        xy=(10, max(accuracies)), 
+        xytext=(12, max(accuracies) - 0.07),
+        arrowprops=dict(facecolor='black', shrink=0.06),
+        fontsize=12
+    )
+
+    # Labels and styling
+    plt.xlabel("Number of Features Selected by RFE", fontsize=12)
+    plt.ylabel("Accuracy", fontsize=12)
+    plt.title("Accuracy vs. Number of Selected Features", fontsize=14, pad=20)
+    plt.xticks(range(1,num))
+    plt.grid(True, linestyle='--', alpha=0.3)
+    plt.legend(framealpha=1)
+    plt.tight_layout()
+
+    # Save and show
+    name = "accuracy_vs_features.png"
+    plt.savefig(picture_path+name, dpi=300, bbox_inches='tight')
+    plt.show()
+
+accuracyovertime(41)

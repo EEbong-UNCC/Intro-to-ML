@@ -113,4 +113,8 @@ Graphs to Create
 -	Model Performance Comparison 
 -	Confusion Matrix of best Model 
 -	Flowchart of workflow 
--	
+
+RFE + NB Accuracy:  0.9607843137254902
+RFE + NB F1:  0.9649122807017543
+RFE + NB Recall:  0.9736842105263158
+RFE + NB Precision:  0.9736842105263158
