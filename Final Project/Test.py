@@ -8,7 +8,7 @@ from featuredocument import *
 
 force_data = pd.read_csv('C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/Data/GP1_0.7_force.csv')
 
-an = process_instance(1, force_data, 10)
+#an = process_instance(1, force_data, 10)
 
 
 #Testing the Functions in FeatureExtraction and Step Separation

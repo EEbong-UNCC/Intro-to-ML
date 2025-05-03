@@ -163,12 +163,8 @@ def fft_features(FP1_z):
     return ans
 
 def psd_features(FP1_z):
-    freqs, psd = welch(FP1_z, fs=1000)
-    plt.plot(freqs, psd)
-    plt.xlabel('Frequency (Hz)')
-    plt.ylabel('Power')# Highlight your band
-    plt.show()
-    ans = [freqs[np.argmax(psd)], np.sum(psd), np.sum(psd[(freqs > 1) & (freqs < 3)]) / np.sum(psd)]
+    freqs, psd = welch(FP1_z, fs=1000, nperseg=len(FP1_z))
+    ans = [freqs[np.argmax(psd)], np.sum(psd), np.sum(psd[(freqs > 1) & (freqs < 15)]) / np.sum(psd)]
     return ans
 
 def harmonic_ratio(FP1_z, fs=1000):

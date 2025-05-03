@@ -1,0 +1,116 @@
+Gait Features 
+Unprocessed Accuracy
+0.7450980392156863
+Norm Accuracy
+0.5294117647058824
+Stand Accuracy
+0.7450980392156863
+c:\Users\lolze\anaconda3\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Recall is ill-defined and being set to 0.0 in labels with no true samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+Naive Bayes Accuracy:  0.803921568627451
+Naive Bayes Recall:  [1.         0.5        0.5        1.         1.         1.
+ 1.         0.8        1.         1.         0.5        1.
+ 1.         0.75       1.         0.5        0.         0.85714286
+ 1.         1.        ]
+Naive Bayes Precision:  [0.5 1.  1.  0.5 1.  0.5 0.5 1.  1.  0.5 1.  1.  1.  1.  1.  1.  0.  1.
+ 1.  0.5]
+Naive Bayes F1:  [0.66666667 0.66666667 0.66666667 0.66666667 1.         0.66666667
+ 0.66666667 0.88888889 1.         0.66666667 0.66666667 1.
+ 1.         0.85714286 1.         0.66666667 0.         0.92307692
+ 1.         0.66666667]
+Naive Bayes Accuracy
+0.803921568627451
+SVM Accuracy:  0.8431372549019608
+SVM+NB Accuracy:  0.7254901960784313
+<bound method SelectorMixin.get_feature_names_out of RFE(estimator=SVC(kernel='linear'), n_features_to_select=12)>
+1 Peak_Force_X2
+1 Peak_Force_Z1
+1 Mean_Force_X1
+1 Mean_Force_Y1
+1 Mean_Force_Y2
+1 Mean_Force_Z1
+1 Mean_Force_Z2
+1 Mean_FTI_Left
+1 Mean_FTI_Right
+1 Average_Unloading_Rate_Right
+1 Time_To_Peak_Force_Left
+1 Swing_Duration
+2 Average_Unloading_Rate_Left
+3 Peak_Force_Y1
+4 Peak_Force_Z2
+5 Mean_Force_X2
+6 Time_To_Peak_Force_Right
+7 Peak_Force_Y2
+8 Double_Support_Time
+9 Peak_Force_X1
+10 Average_Loading_Rate_Right
+11 Average_Loading_Rate_Left
+12 Stance_Duration
+13 Step_Duration
+RFE Accuracy 0.9019607843137255
+RFE + NB Accuracy: 0.803921568627451
+
+
+Frequency Gait Features RFE Feature ranking 
+Unprocessed Accuracy
+0.7058823529411765
+Norm Accuracy
+0.5882352941176471
+Stand Accuracy
+0.7058823529411765
+Naive Bayes Accuracy:  0.9215686274509803
+Naive Bayes Accuracy
+0.9215686274509803
+SVM Accuracy:  0.9019607843137255
+SVM+NB Accuracy:  0.8235294117647058
+<bound method SelectorMixin.get_feature_names_out of RFE(estimator=SVC(kernel='linear'), n_features_to_select=12)>
+1 Mean_Force_X1
+1 Mean_Force_Y1
+1 Mean_Force_Y2
+1 Mean_Force_Z1
+1 Mean_Force_Z2
+1 Mean_FTI_Left
+1 Time_To_Peak_Force_Left
+1 Swing_Duration
+1 FFT_std_Left
+1 FFT_Max_Left
+1 FFT_std_Right
+1 FFT_Max_Right
+2 Average_Unloading_Rate_Right
+3 Peak_Force_Z1
+4 Mean_FTI_Right
+5 Peak_Force_X2
+6 Average_Unloading_Rate_Left
+7 Peak_Force_Y1
+8 Mean_Force_X2
+9 Peak_Force_Z2
+10 Time_To_Peak_Force_Right
+11 Peak_Force_Y2
+12 FFT_Mean_Left
+13 Double_Support_Time
+14 PSD_Total_Power_Right
+15 Harmonic_Ratio_Left
+16 Peak_Force_X1
+17 Average_Loading_Rate_Right
+18 FFT_Mean_Right
+19 Average_Loading_Rate_Left
+20 Harmonic_Ratio_Right
+21 Stance_Duration
+22 PSD_Total_Power_Left
+23 Step_Duration
+24 PSD_Peak_Freq_Left
+25 PSD_Band_Ratio_Left
+26 PSD_Peak_Freq_Right
+27 PSD_Band_Ratio_Right
+RFE Accuracy 0.8627450980392157
+RFE + NB Accuracy: 0.9607843137254902
+
+Graphs to Create
+-	Correlation between Time Variables 
+-	Correlation between Freq Variables 
+-	Correlation between all variables 
+-	RFE Ranking Table or Feature Imortance Plot
+-	Model Performance Comparison 
+-	Confusion Matrix of best Model 
+-	Flowchart of workflow 
+-	
