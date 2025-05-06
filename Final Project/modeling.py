@@ -28,8 +28,8 @@ y_pred = reg.predict(X_test)
 
 classes = reg.classes_
 accuracy = metrics.accuracy_score(y_test,y_pred)
-#print("Unprocessed Accuracy")
-#print(accuracy)
+print("Unprocessed Accuracy")
+print(accuracy)
 
 # Display the confusion matrix
 metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred,labels=classes,
@@ -50,8 +50,8 @@ reg2.fit(X_train_norm,y_train)
 y_pred_2 = reg2.predict(X_test_norm)
 accuracy_norm = metrics.accuracy_score(y_test,y_pred_2)
 
-#print("Norm Accuracy")
-#print(accuracy_norm)
+print("Norm Accuracy")
+print(accuracy_norm)
 
 metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred_2,labels=classes
                                                        ,display_labels=[ 1,  2,  3,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
@@ -71,8 +71,8 @@ reg3.fit(X_train_stand,y_train)
 y_pred_3 = reg3.predict(X_test_stand)
 accuracy_stand = metrics.accuracy_score(y_test,y_pred_3)
 
-#print("Stand Accuracy")
-#print(accuracy_stand)
+print("Stand Accuracy")
+print(accuracy_stand)
 metrics.ConfusionMatrixDisplay.from_predictions(y_test,y_pred_3,labels=classes
                                                        ,display_labels=[ 1,  2,  3,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
                                                        ,cmap="YlGnBu")
@@ -88,8 +88,8 @@ nb_recall = metrics.recall_score(y_test,nb_y_pred, average=None)
 nb_acc = metrics.accuracy_score(y_test,nb_y_pred)
 nb_precision = metrics.precision_score(y_test,nb_y_pred, average=None)
 nb_f1 = metrics.f1_score(y_test,nb_y_pred, average=None)
-#print("Naive Bayes Accuracy")
-#print(acc_nb)
+print("Naive Bayes Accuracy")
+print(acc_nb)
 
 #Build and SVM Classifier to classify the type of cancer 
 from sklearn import svm
@@ -99,7 +99,7 @@ svm_y_pred = svm_classifier.predict(X_test_stand)
 
 #Plot Classification accuracy, precision, recall and F1 score 
 svm_acc = metrics.accuracy_score(y_test,svm_y_pred)
-#print("SVM Accuracy: ", svm_acc)
+print("SVM Accuracy: ", svm_acc)
 
 from sklearn.ensemble import StackingClassifier
 estimators = [('svm', svm.SVC(probability=True)), ('nb', GaussianNB())]
@@ -107,10 +107,10 @@ stack = StackingClassifier(estimators, final_estimator=LogisticRegression())
 stack.fit(X_train_stand, y_train)
 pred = stack.predict(X_test_stand)
 acc2 = metrics.accuracy_score(y_test, pred)
-#print("SVM+NB Accuracy: ", acc2)
+print("SVM+NB Accuracy: ", acc2)
 
 
-'''
+
 #PCA
 pca = PCA(n_components=0.95)
 X_pca = pca.fit_transform(X_train_stand)
@@ -119,18 +119,18 @@ svm_classifier2 = svm.SVC(kernel='rbf')
 svm_classifier2.fit(X_pca, y_train)
 svm_y_pred2 = svm_classifier2.predict(X_pca_test)
 svm_acc2 = metrics.accuracy_score(y_test,svm_y_pred2)
-print("SVM Accuracy: ", svm_acc2)
-'''
+print("PCA Accuracy: ", svm_acc2)
+
 
 from sklearn.feature_selection import RFE 
 from sklearn.pipeline import Pipeline
 
 
-rfe = RFE(estimator=svm_classifier, n_features_to_select=10)
+rfe = RFE(estimator=svm_classifier, n_features_to_select=12)
 rfe.fit(X_train_stand,y_train)
 #print(rfe.get_feature_names_out)
 
-'''
+
 from operator import itemgetter
 column = ['Peak_Force_X1','Peak_Force_X2','Peak_Force_Y1','Peak_Force_Y2','Peak_Force_Z1','Peak_Force_Z2'
         ,'Mean_Force_X1','Mean_Force_X2','Mean_Force_Y1','Mean_Force_Y2','Mean_Force_Z1','Mean_Force_Z2'
@@ -141,11 +141,11 @@ column = ['Peak_Force_X1','Peak_Force_X2','Peak_Force_Y1','Peak_Force_Y2','Peak_
         , 'PSD_Total_Power_Right', 'PSD_Band_Ratio_Right', 'Harmonic_Ratio_Left', 'Harmonic_Ratio_Right']
 for x, y in (sorted(zip(rfe.ranking_ , column), key=itemgetter(0))):
     print(x, y)
-'''
+
 
 pred = rfe.predict(X_test_stand)
 acc_rfe = metrics.accuracy_score(y_test,pred)
-#print("RFE Accuracy", acc_rfe)
+print("RFE Accuracy", acc_rfe)
 
 X_train_rfe = rfe.transform(X_train_stand)
 X_test_rfe = rfe.transform(X_test_stand)
@@ -159,6 +159,10 @@ f1 = metrics.f1_score(y_test, nb2pred, average='macro')
 print("RFE + NB F1: ", f1)
 recall = metrics.recall_score(y_test, nb2pred, average='macro')
 print("RFE + NB Recall: ", recall)
-precision = metrics.precision_score(y_test, nb2pred, average=None)
+precision = metrics.precision_score(y_test, nb2pred, average='macro')
 print("RFE + NB Precision: ", precision)
 
+classifer_test = svm.SVC(kernel='linear')
+classifer_test.fit(X_train_rfe, y_train)
+pred = classifer_test.predict(X_test_rfe)
+print(metrics.accuracy_score(y_test,pred))

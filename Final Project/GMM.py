@@ -1,15 +1,49 @@
 import numpy as np 
-import matplotlib.pyplot as plt
 import pandas as pd
-import csv
-import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.mixture import GaussianMixture
-from sklearn import metrics
+from sklearn import preprocessing
 from sklearn.cluster import KMeans
 from scipy import stats
-from linearregression import X_train_stand,X_test_stand,y_test,y_train,Y, X_train_norm, X_test_norm
+
+file_path = 'C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/GaitFeatures.csv'
+
+data = pd.read_csv(file_path)
+
+#sepeate data into features and Y
+X = data.iloc[:, 1:].values
+Y = data.iloc[:, 0].values
+
+#split data into train and test 
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X,Y, test_size = 0.20, random_state=2)
+
+#standardize data
+sc2 = preprocessing.StandardScaler()
+X_train_stand = sc2.fit_transform(X_train)
+X_test_stand = sc2.transform(X_test)
+y_train_stand = sc2.fit_transform(y_train.reshape(-1, 1)).flatten() 
+y_test_stand = sc2.transform(y_test.reshape(-1, 1)).flatten() 
+
+file_path2 = 'C:/Users/lolze/Documents/Spring 2025/Intro to ML/Github/Intro-to-ML/Final Project/FullGaitFeatures.csv'
+
+data2 = pd.read_csv(file_path2)
+
+#sepeate data into features and Y
+X2 = data.iloc[:, 1:].values
+Y2 = data.iloc[:, 0].values
+
+#split data into train and test 
+from sklearn.model_selection import train_test_split
+X_train2, X_test2, y_train2, y_test2 = train_test_split(X2,Y2, test_size = 0.20, random_state=2)
+
+#standardize data
+sc22 = preprocessing.StandardScaler()
+X_train_stand2 = sc22.fit_transform(X_train2)
+X_test_stand2 = sc22.transform(X_test2)
+y_train_stand2 = sc22.fit_transform(y_train2.reshape(-1, 1)).flatten() 
+y_test_stand2 = sc22.transform(y_test2.reshape(-1, 1)).flatten() 
+
 
 def trainGMM(x_train, y_train, num_clusters):
     n_people = np.unique(Y)
@@ -92,12 +126,29 @@ def kmeansGMM(parsedData, numclusters, covTYPE):
 
 if __name__ =='__main__':
     #run accurracy with GMM
-    
+    print("----- GMM Model Accuracy Time Domain Features ------")
     gmmlist = trainGMM(X_train_stand,y_train,2)
     predictions = predict(gmmlist, X_test_stand)
     acc = accuracy(predictions, y_test)
+    print("----- GMM Model Accuracy EM ------")
     print(acc)
 
-    
+    kgmmlist =kmmeanstrainGMM(X_train_stand, y_train,2)
+    kpreditions = predict(kgmmlist, X_test_stand)
+    kacc = accuracy(predictions, y_test)
+    print("----- GMM Model Accuracy K-Means ------")
+    print(kacc)
 
-#GMM Most accurate with 2 clusters 
+    print("----- GMM Model Accuracy All Features ------")
+    gmmlist2 = trainGMM(X_train_stand2,y_train2,2)
+    predictions2 = predict(gmmlist2, X_test_stand2)
+    acc2 = accuracy(predictions2, y_test2)
+    print("----- GMM Model Accuracy EM ------")
+    print(acc2)
+
+    kgmmlist2 =kmmeanstrainGMM(X_train_stand2, y_train2,2)
+    kpreditions2 = predict(kgmmlist2, X_test_stand2)
+    kacc2 = accuracy(predictions2, y_test2)
+    print("----- GMM Model Accuracy K-Means ------")
+    print(kacc2)
+     

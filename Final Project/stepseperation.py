@@ -53,7 +53,6 @@ def strike_gradient(instance, threshold):
     right_slope = np.gradient(right, row_num)
     #when slope is positive and force is less than threshold
     for x in range(len(left_slope)-1):
-        #problem, it's going to take every time in the stance duration until the slope becomes negative
         if left_slope[x] > 0 and left[x] < threshold and left[x+1] >=threshold:
             heel_strike_index[0].append(x)
         if right_slope[x] > 0 and right[x]<threshold and right[x+1] >=threshold:

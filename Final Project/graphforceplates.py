@@ -19,7 +19,7 @@ def plotGRFForce():
     plt.xlabel("Time (s)")
     plt.ylabel("GRF (N)")
     plt.xlim([0,3000])
-    plt.title("GRF and Slope for Force Plate 1 (Left Foot)")
+    plt.title("GRF for Force Plate 1 (Left Foot)")
     plt.legend()
 
     # Plot GRF for Force Plate 2 (right foot)
@@ -28,7 +28,7 @@ def plotGRFForce():
     plt.xlabel("Time (s)")
     plt.ylabel("GRF (N)")
     plt.xlim([0,3000])
-    plt.title("GRF and Slope for Force Plate 2 (Right Foot)")
+    plt.title("GRF for Force Plate 2 (Right Foot)")
     plt.legend()
 
     plt.subplot(3, 1, 3)
@@ -37,10 +37,10 @@ def plotGRFForce():
     plt.xlabel("Time (s)")
     plt.ylabel("GRF (N)")
     plt.xlim([0,3000])
-    plt.title("GRF and Slope for Force Plate 1 (Left Foot)")
+    plt.title("Slope for Force Plates")
     plt.legend()
 
     plt.tight_layout()
     plt.show()
-
+plotGRFForce()
 #Graph normalized data to see if there is a change in result
