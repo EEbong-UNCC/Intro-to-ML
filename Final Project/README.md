@@ -10,19 +10,19 @@ A machine learning model that identifies individuals based on gait patterns usin
 
 ## Repository Structure
 wscode/
-├── Data/ # Raw and processed datasets
-├── Figure Folder/ # Visualizations (correlation matrices, accuracy plots)
-│
-├── featureextraction.py # Time/frequency-domain feature extraction
-├── freqfeaturedocument.py # Frequency analysis (FFT, PSD)
-├── stepseparation.py # Heel-strike/toe-off detection algorithm
-├── modeling.py # ML model training (SVC, GMM, Logistic Regression)
-├── crossvalidation.py # K-fold validation and performance metrics
-├── graphcreation.py # Visualization tools
-│
-├── FullGaitFeatures.csv # Processed feature dataset
-├── ModelPerformance.txt # Accuracy metrics across models
-├── README.md # This file
+   ├── Data/ # Raw and processed datasets
+   ├── Figure Folder/ # Visualizations (correlation matrices, accuracy plots)
+   │
+   ├── featureextraction.py # Time/frequency-domain feature extraction
+   ├── freqfeaturedocument.py # Frequency analysis (FFT, PSD)
+   ├── stepseparation.py # Heel-strike/toe-off detection algorithm
+   ├── modeling.py # ML model training (SVC, GMM, Logistic Regression)
+   ├── crossvalidation.py # K-fold validation and performance metrics
+   ├── graphcreation.py # Visualization tools
+   │
+   ├── FullGaitFeatures.csv # Processed feature dataset
+   ├── ModelPerformance.txt # Accuracy metrics across models
+   ├── README.md # This file
 
 ## Installation
 1. Clone the repository:
